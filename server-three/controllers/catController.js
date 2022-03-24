@@ -29,16 +29,17 @@ const cat_post = async (req, res) => {
 
 const cat_put = async (req, res) => {
   console.log(req.body);
-  const color = req.body.color;
-  const weight = req.body.weight;
   try {
+    const color = req.body.color;
+    const weight = req.body.weight;
+    const name = req.body.name;
     const cat = await cats.updateOne(
-      { _id: req.params._id },
-      { color, weight }
+      { _id: req.params.id },
+      { color, weight, name }
     );
     res.json(cat);
   } catch (error) {
-    console.error(error);
+    console.log(error);
   }
 };
 
