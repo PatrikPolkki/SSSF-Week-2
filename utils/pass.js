@@ -1,55 +1,32 @@
 "use strict";
 import passport from "passport";
-import { Strategy } from "passport-local";
+import Strategy from "passport-local";
+import { ExtractJwt, Strategy as JWTStrategy } from "passport-jwt";
 import { getUserLogin } from "../models/userModel";
-import passportJWT from "passport-jwt";
 
-const JWTStrategy = passportJWT.Strategy;
-const ExtractJWT = passportJWT.ExtractJwt;
-
-// local strategy for username password login
 passport.use(
-  new Strategy(async (username, password, done) => {
-    const params = [username];
-    try {
-      const [user] = getUserLogin(params);
-      console.log("Local strategy", user);
-      if (user === undefined) {
-        return done(null, false, { message: "Incorrect email." });
-      }
-      if (user.password !== password) {
-        return done(null, false, { message: "Incorrect password." });
-      }
-      return done(null, { ...user }, { message: "Logged In Successfully" }); // use spread syntax to create shallow copy to get rid of binary row type
-    } catch (err) {
-      return done(err);
-    }
+  new Strategy({}, (username, password, done) => {
+    const user = getUserLogin(username);
+    // if user is undefined
+    if (!user) return done(null, false);
+    // if passwords dont match
+    if (user.password !== password) return done(null, false);
+    // if all is ok
+    delete user.password;
+    return done(null, user);
   })
 );
 
-// TODO: JWT strategy for handling bearer token
-// consider .env for secret, e.g. secretOrKey: process.env.JWT_SECRET
-
 passport.use(
+  "jwt",
   new JWTStrategy(
     {
-      jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
-      secretOrKey: "Helsinki",
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      secretOrKey: "987456",
     },
-    async (jwtPayLoad, done) => {
-      try {
-        if (jwtPayLoad === undefined) {
-          return done(null, false, { message: "Incorrect id." });
-        }
-        // jwt matches
-        return done(
-          null,
-          { ...jwtPayLoad },
-          { message: "Logged in succesfully" }
-        );
-      } catch (err) {
-        return done(err);
-      }
+    (payload, done) => {
+      console.log("jwt payload", payload);
+      done(null, payload);
     }
   )
 );

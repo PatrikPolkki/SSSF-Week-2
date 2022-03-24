@@ -16,7 +16,7 @@ const port = process.env.PORT || 3000;
 
 app.use("/auth", authRoute);
 
-app.use("/cat", catRoute);
+app.use("/cat", passport.authenticate("jwt", { session: false }), catRoute);
 app.use("/user", passport.authenticate("jwt", { session: false }), userRoute);
 
 db.on("connected", () => {

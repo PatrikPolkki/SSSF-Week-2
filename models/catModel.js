@@ -16,4 +16,26 @@ const catSchema = new Schema({
   },
 });
 
+catSchema.query.byGender = function (gender) {
+  return this.find(gender ? { gender } : {});
+};
+
+catSchema.query.olderThan = function (age) {
+  return this.find(
+    age
+      ? {
+          birthdate: {
+            $gte: new Date(
+              new Date().setFullYear(new Date().getFullYear() - age)
+            ),
+          },
+        }
+      : {}
+  );
+};
+
+catSchema.query.heavierThan = function (weight) {
+  return this.find(weight ? { weight: { $gte: weight } } : {});
+};
+
 export default mongoose.model("cat", catSchema);

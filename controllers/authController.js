@@ -12,13 +12,7 @@ const login = (req, res) => {
       if (err) {
         res.status(400).send("Error logging in.");
       }
-      const { id, name, email } = user;
-      const tokenUser = {
-        id: id,
-        name: name,
-        email: email,
-      };
-      const token = jwt.sign(tokenUser, "Helsinki");
+      const token = jwt.sign(user, "987456");
       return res.status(200).json({ message: token });
     });
   })(req, res);

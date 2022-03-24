@@ -7,6 +7,7 @@ import {
   cat_get,
   cat_post,
   cat_put,
+  cat_delete,
 } from "../controllers/catController";
 
 const upload = multer({ dest: "./uploads" });
@@ -19,5 +20,7 @@ router.get("/:id", cat_get);
 router.post("/", upload.single("cat"), cat_post);
 
 router.put("/:id", cat_put);
+
+router.delete("/:id", cat_delete);
 
 export default router;

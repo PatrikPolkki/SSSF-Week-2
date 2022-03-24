@@ -3,7 +3,22 @@
 import cats from "../models/catModel";
 
 const cat_list_get = async (req, res) => {
-  res.json(await cats.find());
+  console.log("query", req.query);
+  const gender = req.query.gender;
+  const weight = req.query.weight;
+  const age = req.query.age;
+
+  try {
+    const result = await cats
+      .find()
+      .byGender(gender)
+      .olderThan(age)
+      .heavierThan(weight);
+
+    res.json(result);
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const cat_get = async (req, res) => {
@@ -43,4 +58,12 @@ const cat_put = async (req, res) => {
   }
 };
 
-export { cat_list_get, cat_get, cat_post, cat_put };
+const cat_delete = async (req, res) => {
+  try {
+    res.json(await cats.deleteOne({ _id: req.params.id }));
+  } catch (e) {
+    res.json(e);
+  }
+};
+
+export { cat_list_get, cat_get, cat_post, cat_put, cat_delete };
