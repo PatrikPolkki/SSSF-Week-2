@@ -1,3 +1,2 @@
-# wop-starters
+# Week-2
 
-Choose a branch and download as zip.
